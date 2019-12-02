@@ -76,7 +76,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class Sintaxis {
 
-    //ed
+    //<editor-fold desc="Declaraciones sintaxis">
     LinkedList<Token> lt;
     LinkedList<Error> le;
     Integer ultimo = 814;
@@ -210,8 +210,8 @@ public class Sintaxis {
     };
     int[][] matriz;
     Stack<Integer> ps = new Stack();
-///ed
-    //ed
+//</editor-fold>
+    //<editor-fold desc="">
     Integer contadorAmb;
     int contadorEjecucionAsignacion = 0;
     boolean definicionVariable = false, zona = true, definicionFuncion = false, ejecucionAsignacion = false;

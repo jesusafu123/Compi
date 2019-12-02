@@ -582,14 +582,12 @@ public class MainApp extends Application {
                 }
             }
         }
-        Cuadruplos cuad = new Cuadruplos(copyLT);
         if (l.getLE().isEmpty()) {
             System.out.println("WUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU");
         }
         this.excelAmbito = synth.AmbitoExcel;
         this.excelSem1 = synth.objetoSem1s;
         this.excelSem2 = synth.objetoSem2s;
-        this.excelCuad = cuad.getDatos();
         for (Ambito r : AmbitoDB.enlistarRegistros()) {
             ambitos.add(
                     //                    identificador, ambito, tipo, clase, tamanioArreglo, dimensionArreglo, posicionParametro, funcionOrigen, cantidadParametros, ambitoCreado, avance, llave
