@@ -1,0 +1,8 @@
+.root {
+    -fx-background-color: #363636;
+}
+
+.paneCodigo {
+    -fx-background-color: #ff0066;
+    -fx-padding: 10px;
+}
