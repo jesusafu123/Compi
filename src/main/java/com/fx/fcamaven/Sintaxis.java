@@ -7,6 +7,8 @@ import static com.fx.fcamaven.Arrobas.arrobas.AMBITO_DECLARACION_VARIABLE_1;
 import static com.fx.fcamaven.Arrobas.arrobas.AMBITO_DECLARACION_VARIABLE_2;
 import static com.fx.fcamaven.Arrobas.arrobas.AMBITO_ZONA_DECLARACION;
 import static com.fx.fcamaven.Arrobas.arrobas.AMBITO_ZONA_EJECUCION;
+import static com.fx.fcamaven.Arrobas.arrobas.CUAD_PRINT_1;
+import static com.fx.fcamaven.Arrobas.arrobas.CUAD_PRINT_2;
 import static com.fx.fcamaven.Arrobas.arrobas.SEM1_ASIGNACION_1;
 import static com.fx.fcamaven.Arrobas.arrobas.SEM1_ASIGNACION_2;
 import static com.fx.fcamaven.Arrobas.arrobas.SEM2_1010_1;
@@ -190,7 +192,7 @@ public class Sintaxis {
         /*107*/ {-37, 212, -36, -79}, // FUNCIONES::= ) OR ( median
         /*108*/ {-37, 212, -36, -80}, // FUNCIONES::= ) OR ( variance
         /*109*/ {-37, 212, -36, -81}, // FUNCIONES::= ) OR ( sum
-        /*110*/ {-37, 247, 212, -36, -61}, // ESTATUTOS::= ) X OR ( print
+        /*110*/ {CUAD_PRINT_2, -37, 247, 212, -36, -61, CUAD_PRINT_1}, // ESTATUTOS::= @ ) X OR ( print @
         /*111*/ {-37, 248, -36, -91}, // ESTATUTOS::= ) Y ( println
         /*112*/ {-93, 250, 249, 246, -51, SEM2_1010_2, 212, -59, SEM2_1010_1}, // ESTATUTOS::= end Z2 Z ESTATUTOS : @ OR if @
         /*113*/ {-93, 249, 246, -51, SEM2_FOR_2, 212, -95, 212, -58, SEM2_FOR_1}, // ESTATUTOS::= end Z ESTATUTOS : @ OR for @
@@ -211,7 +213,7 @@ public class Sintaxis {
     int[][] matriz;
     Stack<Integer> ps = new Stack();
 //</editor-fold>
-    //<editor-fold desc="">
+    //<editor-fold desc="Declaraciones ambito">
     Integer contadorAmb;
     int contadorEjecucionAsignacion = 0;
     boolean definicionVariable = false, zona = true, definicionFuncion = false, ejecucionAsignacion = false;
@@ -223,41 +225,42 @@ public class Sintaxis {
     private LinkedList<LinkedList<Token>> definicionesFuncionesT = new LinkedList();
     private LinkedList<LinkedList<Token>> ejecucionAsignacionT = new LinkedList();
 
-    ///ed
-    //ed
+    //</editor-fold>
+    //<editor-fold desc="declaraciones sem1">
     private String[][][] matrizSem1;
     private Stack<Token> operadores = new Stack();
     private Stack<Token> operandos = new Stack();
     Stack<Integer> pila = new Stack();
     Integer contadorVariante = 0;
     public LinkedList<ObjetoSem1> objetoSem1s;
-    ///ed
-    //ed
+    //</editor-fold>
+    //<editor-fold desc="Declaraciones sem2">
     LinkedList<String> R1010C = new LinkedList();
     LinkedList<LinkedList<Token>> R1010T = new LinkedList();
     LinkedList<ObjetoSem2> objetoSem2s = new LinkedList();
     ObjetoSem2 os2;
     boolean R1010 = false;
     int contadorSem2 = 0;
-    ///ed
-    //ed
+    //</editor-fold>
+    //<editor-fold desc="Declaraciones sem3">
     LinkedList<String> semantica3C = new LinkedList();
     LinkedList<LinkedList<Token>> semantica3T = new LinkedList();
     boolean semantica3 = false;
     int contadorSem3 = 0;
-    ///ed
     String forsC = "";
     LinkedList<Token> forsT = new LinkedList();
     boolean fors = false;
-    //asdasdasd
-    //asdfasdfasdf
     String ransC;
     LinkedList<Token> ransT;
     boolean rans = false;
-    //sdfasdfas
-    //asdasdasda
     int contadorFun = 1;
-    //asdasda
+    //</editor-fold>
+    //<editor-fold desc="Declaraciones cuádruplos">
+    LinkedList<Cuadruplo> llCuadruplos = new LinkedList();
+    LinkedList<Token> cuadPrintT = new LinkedList();
+    String cuadPrintC = "";
+    boolean cuadPrint = false;
+    //</editor-fold>
 
     public void rellenarPs(int pos) {
         if (pos == 1) {
@@ -363,6 +366,10 @@ public class Sintaxis {
                             if (rans) {
                                 ransC += lt.getFirst().lexema.trim();
                                 ransT.add(lt.getFirst());
+                            }
+                            if (cuadPrint) {
+                                cuadPrintC += lt.getFirst().lexema.trim();
+                                cuadPrintT.add(lt.getFirst());
                             }
                             ///ed
                         } else {
@@ -3553,6 +3560,27 @@ public class Sintaxis {
                                         contadorFun++;
                                         break;
                                     }
+                                    case 818: {
+                                        cuadPrint = true;
+                                        cuadPrintC = "";
+                                        cuadPrintT = new LinkedList();
+                                        break;
+                                    }
+                                    case 819: {
+                                        if (!cuadPrintT.isEmpty()) {
+                                            if (cuadPrintC.matches("print\\(\".+\"\\)")) {
+                                                Cuadruplo c = new Cuadruplo();
+                                                c.setAccion("call");
+                                                c.setArg1("print");
+                                                llCuadruplos.add(c);
+                                                
+                                                c = new Cuadruplo();
+                                                c.setArg1("");
+                                            }
+                                        }
+                                        cuadPrint = false;
+                                        break;
+                                    }
                                 }
                                 ///ed
                             }
@@ -4044,7 +4072,7 @@ public class Sintaxis {
             }
         }
     }
-    
+
     public boolean contieneReservadas(String string) {
         LinkedList<String> palabrasReservadas = new LinkedList();
         palabrasReservadas.add("is");

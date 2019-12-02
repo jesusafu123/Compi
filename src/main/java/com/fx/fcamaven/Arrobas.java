@@ -32,5 +32,7 @@ public class Arrobas {
         public static int SEM2_RAN_1 = 815;
         public static int SEM2_RAN_2 = 816;
         public static int SEM2_RET = 817;
+        public static int CUAD_PRINT_1 = 818;
+        public static int CUAD_PRINT_2 = 819;
     }
 }
