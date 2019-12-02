@@ -71,7 +71,7 @@ public class Excelsior {
             e.printStackTrace();
         }
     }
-    
+
     public static void imprimirMatriz(String[][][] matriz) {
         for (int i = 0; i < matriz.length; i++) {
             for (int j = 0; j < matriz[i].length; j++) {
@@ -150,8 +150,6 @@ public class Excelsior {
         cell.setCellValue("Diccionarios");
         cell = row.createCell(18);
         cell.setCellValue("Total/Amb");
-        
-        
 
         for (int i = 0; i < a.size(); i++) {
             row = sheet.createRow(i + 2);
@@ -196,7 +194,7 @@ public class Excelsior {
             cell = row.createCell(18);
             cell.setCellValue(a.get(i).getTotal());
         }
-        
+
         sheet = workbook.createSheet("Contadores de Semantica 1");
         row = sheet.createRow(0);
         cell = row.createCell(0);
@@ -289,7 +287,7 @@ public class Excelsior {
             cell = row.createCell(5);
             cell.setCellValue(sem2.get(j).getAmbito());
         }
-        
+
         sheet = workbook.createSheet("Cuádruplos");
         row = sheet.createRow(0);
         cell = row.createCell(0);
@@ -302,18 +300,20 @@ public class Excelsior {
         cell.setCellValue("Arg2");
         cell = row.createCell(4);
         cell.setCellValue("Resultado");
-        for (int j = 0; j < cuad.size(); j++) {
-            row = sheet.createRow(j + 1);
-            cell = row.createCell(0);
-            cell.setCellValue(cuad.get(j).getEtiqueta());
-            cell = row.createCell(1);
-            cell.setCellValue(cuad.get(j).getAccion());
-            cell = row.createCell(2);
-            cell.setCellValue(cuad.get(j).getArg1());
-            cell = row.createCell(3);
-            cell.setCellValue(cuad.get(j).getArg2());
-            cell = row.createCell(4);
-            cell.setCellValue(cuad.get(j).getResultado());
+        if (cuad != null) {
+            for (int j = 0; j < cuad.size(); j++) {
+                row = sheet.createRow(j + 1);
+                cell = row.createCell(0);
+                cell.setCellValue(cuad.get(j).getEtiqueta());
+                cell = row.createCell(1);
+                cell.setCellValue(cuad.get(j).getAccion());
+                cell = row.createCell(2);
+                cell.setCellValue(cuad.get(j).getArg1());
+                cell = row.createCell(3);
+                cell.setCellValue(cuad.get(j).getArg2());
+                cell = row.createCell(4);
+                cell.setCellValue(cuad.get(j).getResultado());
+            }
         }
 
         try {

@@ -583,6 +583,7 @@ public class MainApp extends Application {
             }
         }
         if (l.getLE().isEmpty()) {
+            this.excelCuad = synth.llCuadruplos;
             System.out.println("WUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU");
         }
         this.excelAmbito = synth.AmbitoExcel;

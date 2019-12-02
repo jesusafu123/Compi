@@ -260,6 +260,7 @@ public class Sintaxis {
     LinkedList<Token> cuadPrintT = new LinkedList();
     String cuadPrintC = "";
     boolean cuadPrint = false;
+    int contadorWhile = 1, contadorTB = 1;
     //</editor-fold>
 
     public void rellenarPs(int pos) {
@@ -1642,6 +1643,7 @@ public class Sintaxis {
                                                                 objetoSem2s.add(o2);
                                                             }
                                                         } else {
+                                                            System.out.println("CONTIENE RESERVADAS PUTOOOOOOOOOO: " + string);
                                                             Token operador = a.get(1);
                                                             Token a2 = a.getFirst();
                                                             Ambito ambito = null;
@@ -2182,10 +2184,12 @@ public class Sintaxis {
                                             o.setAmbito(pila.peek());
                                             o.setLinea(llT.getFirst().numeroLinea);
                                             o.setTopeDePila(BOO);
+                                            Cuadruplo cuad = new Cuadruplo();
                                             if (string.matches("(i|I)(f|F).+")) {
                                                 o.setRegla(1010 + "");
                                             } else if (string.matches("(w|W)(h|H)(i|I)(l|L)(e|E).+")) {
                                                 o.setRegla(1011 + "");
+                                                cuad.setEtiqueta("Whi-E" + contadorWhile++);
                                             } else if (string.matches("(e|E)(l|L)(i|I)(f|F).+")) {
                                                 o.setRegla(1012 + "");
                                             }
@@ -2254,7 +2258,20 @@ public class Sintaxis {
                                                 }
                                             }
                                             while (operadores.size() > 0) {
-                                                hacerOperacion(2);
+                                                Token cuads1 = operandos.peek();
+                                                Token cuads2 = operandos.get(operandos.size() - 2);
+                                                Token cuadsOp = operadores.peek();
+                                                cuad.setAccion(cuadsOp.lexema.trim());
+                                                if (cuads1.value != null) {
+                                                    cuad.setArg2(cuads1.lexema.trim());
+                                                }
+                                                if (cuads2.value != null) {
+                                                    cuad.setArg1(cuads2.lexema.trim());
+                                                }
+                                                Token cuadsr = hacerOperacion(2);
+                                                String valor = transformar(cuadsr);
+                                                cuad.setResultado(valor);
+                                                llCuadruplos.add(cuad);
                                             }
                                             Token r = operandos.pop();
                                             if (r.value.equals(BOO)) {
@@ -3573,9 +3590,11 @@ public class Sintaxis {
                                                 c.setAccion("call");
                                                 c.setArg1("print");
                                                 llCuadruplos.add(c);
-                                                
+
                                                 c = new Cuadruplo();
-                                                c.setArg1("");
+                                                c.setArg1(CAD);
+                                                c.setResultado("none/void");
+                                                llCuadruplos.add(c);
                                             }
                                         }
                                         cuadPrint = false;
@@ -3660,28 +3679,18 @@ public class Sintaxis {
         }
     }
 
-    public void hacerOperacion(int op) {
+    public Token hacerOperacion(int op) {
         Token a1 = null;
         Token a2 = null;
         Token o = null;
-        if (op == 1) {
-            a1 = operandos.pop();
-            a2 = operandos.pop();
-            o = operadores.pop();
-        } else if (op == 2) {
-            a1 = operandos.pop();
-            a2 = operandos.pop();
-            o = operadores.pop();
-        }
+        a1 = operandos.pop();
+        a2 = operandos.pop();
+        o = operadores.pop();
         Integer hoja = calcularHoja(o);
         Integer fila = calcularFC(a1);
         Integer columna = calcularFC(a2);
         Token r = null;
-        if (op == 1) {
-            r = realizarCalculo(hoja, fila, columna, op);
-        } else if (op == 2) {
-            r = realizarCalculo(hoja, fila, columna, op);
-        }
+        r = realizarCalculo(hoja, fila, columna, op);
         if (r.lexema.trim().equals("@ERROR@")) {
             String aux = "";
             if (a2.lexema.trim().equals("@@@") || a2.lexema.trim().equals("@ERROR@")) {
@@ -3695,17 +3704,10 @@ public class Sintaxis {
             } else {
                 aux += a1.lexema.trim();
             }
-            if (op == 1) {
-                generarErrorSemantica1(a1.numeroLinea, ES_1, aux);
-            } else if (op == 2) {
-                generarErrorSemantica2(a1.numeroLinea, ES_1, aux);
-            }
+            generarErrorSemantica1(a1.numeroLinea, ES_1, aux);
         }
-        if (op == 1) {
-            operandos.add(r);
-        } else if (op == 2) {
-            operandos.add(r);
-        }
+        operandos.add(r);
+        return r;
     }
 
     public boolean esAsignacion(Token t) {
@@ -3722,6 +3724,17 @@ public class Sintaxis {
             }
             default: {
                 return false;
+            }
+        }
+    }
+
+    public String transformar(Token t) {
+        switch (t.value) {
+            case "Booleano": {
+                return "TB" + contadorTB++;
+            }
+            default: {
+                return "";
             }
         }
     }
