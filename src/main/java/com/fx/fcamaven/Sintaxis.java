@@ -267,7 +267,7 @@ public class Sintaxis {
     Token cuadWendT, cuadFendT, cuadIendT;
     String cuadPrintC = "";
     boolean cuadPrint = false, cuadWend = false, cuadFend = false, cuadIend = false;
-    int contadorWhile = 1, contadorTB = 1, contadorTfor = 1, contadorFor = 1, contadorTforb = 1, contadorIf = 1, contadorTD = 1;
+    int contadorWhile = 1, contadorTB = 1, contadorTfor = 1, contadorFor = 1, contadorTforb = 1, contadorIf = 1, contadorTD = 1, contadorTL = 1;
     LinkedList<ContadoresCuadruplos> cc = new LinkedList();
     Stack<Cuadruplo> sc = new Stack();
     //</editor-fold>
@@ -963,6 +963,7 @@ public class Sintaxis {
                                             if (--contadorEjecucionAsignacion == 0) {
                                                 String string = ejecucionAsignacionC.getLast();
                                                 LinkedList<Token> a = ejecucionAsignacionT.getLast();
+                                                String arr = "";
                                                 if (!string.equals("")) {
                                                     if (string.matches("[^=]+(\\+|-|\\*{1,2}|\\/{1,2}|%)?=.+")) {
                                                         //ed
@@ -986,6 +987,7 @@ public class Sintaxis {
                                                                 }
                                                                 generarErrorSemantica2(a.getFirst().numeroLinea, ES_5, string1);
                                                             } else if (bAmbito.getClase().equals(ARR)) {
+                                                                arr = bAmbito.getIdentificador().trim();
                                                                 String aux4 = "";
                                                                 for (int i = 1; i < a.size(); i++) {
                                                                     aux4 += a.get(i).lexema.trim();
@@ -1001,6 +1003,12 @@ public class Sintaxis {
                                                                 o.setLinea(a.getFirst().numeroLinea);
                                                                 System.out.println("N de linea: " + a.getFirst().numeroLinea);
                                                                 o.setRegla(1030 + "");
+                                                                Cuadruplo cuadL = new Cuadruplo();
+                                                                cuadL.setAccion("Lista");
+                                                                cuadL.setArg1(arr);
+                                                                llCuadruplos.add(cuadL);
+
+                                                                cuadL = new Cuadruplo();
                                                                 switch (aux.length) {
                                                                     case 1: { //Si llamó una dimensión
                                                                         if (bAmbito.getDimensionArreglo() == 1) {
@@ -1010,6 +1018,7 @@ public class Sintaxis {
                                                                         }
                                                                         o.setValorReal("1 dimensión");
                                                                         o.setEstado(SEM2_A);
+                                                                        cuadL.setArg1(aux[0]);
                                                                         break;
                                                                     }
                                                                     case 2: { //Si llamó 2 dimensiones
@@ -1026,6 +1035,8 @@ public class Sintaxis {
                                                                             o.setEstado(SEM2_E);
                                                                             generarErrorSemantica2(a.getFirst().numeroLinea, ES_6, aux4);
                                                                         }
+                                                                        cuadL.setArg1(aux[0]);
+                                                                        cuadL.setArg2(aux[1]);
                                                                         break;
                                                                     }
                                                                     case 3: {
@@ -1044,6 +1055,8 @@ public class Sintaxis {
                                                                         }
                                                                     }
                                                                 }
+                                                                cuadL.setResultado("TL" + contadorTL++);
+                                                                llCuadruplos.add(cuadL);
                                                                 objetoSem2s.add(o);
                                                                 //ed
                                                                 if (o.getEstado().equals(SEM2_A)) {
@@ -1560,11 +1573,17 @@ public class Sintaxis {
                                                                     os2.setTopeDePila("Variable/Parámetro/Arreglo/Lista/Diccionario/Rango");
                                                                     os2.setValorReal(clase);
                                                                     objetoSem2s.add(os2);
-                                                                    
+
                                                                     Cuadruplo cuad = new Cuadruplo();
                                                                     cuad.setAccion(operador.lexema.trim());
                                                                     cuad.setArg1(a2.lexema.trim());
+                                                                    if (cuad.getArg1().trim().equals(arr)) {
+                                                                        cuad.setArg1("TL" + (contadorTL - 1));
+                                                                    }
                                                                     cuad.setArg2(a1.lexema.trim());
+                                                                    if (cuad.getArg2().trim().equals(arr)) {
+                                                                        cuad.setArg2("TL" + (contadorTL - 1));
+                                                                    }
                                                                     String tr = transformar(a1);
                                                                     cuad.setResultado(tr);
                                                                     llCuadruplos.add(cuad);
@@ -1714,7 +1733,10 @@ public class Sintaxis {
                                                                     Cuadruplo cuad = new Cuadruplo();
                                                                     cuad.setAccion("=");
                                                                     cuad.setArg1(a2.lexema.trim());
-                                                                    cuad.setResultado("none/void");
+                                                                    if (cuad.getArg1().equals(arr)) {
+                                                                        cuad.setArg1("TL" + (contadorTL - 1));
+                                                                    }
+                                                                    cuad.setResultado("void");
                                                                     llCuadruplos.add(cuad);
                                                                     //</editor-fold>
                                                                 } else {
@@ -2265,6 +2287,7 @@ public class Sintaxis {
                                                 llT.removeFirst();
                                                 llT.removeLast();
                                             }
+                                            String arr = "";
                                             while (!llT.isEmpty()) {
                                                 Token b = llT.pop();
                                                 if (esOperador(b)) {
@@ -2298,17 +2321,33 @@ public class Sintaxis {
                                                                 b.value = bAmbito.getTipo().trim();
                                                             } else {
                                                                 if (bAmbito.getClase().trim().equals(ARR)) {
-                                                                    if (bAmbito.getIdentificador().trim().equals("A")) {
-                                                                        LinkedList<Token> auxLL = (LinkedList) llT.clone();
-                                                                        for (Token token : auxLL) {
-                                                                            if (!token.equals(b)) {
-                                                                                Token a = llT.pop();
-                                                                                if (a.lexema.trim().equals("]")) {
-                                                                                    break;
-                                                                                }
+                                                                    Cuadruplo cuadL = new Cuadruplo();
+                                                                    cuadL.setAccion("Lista");
+                                                                    arr = bAmbito.getIdentificador();
+                                                                    cuadL.setArg1(bAmbito.getIdentificador());
+                                                                    llCuadruplos.add(cuadL);
+
+                                                                    cuadL = new Cuadruplo();
+                                                                    cuadL.setResultado("TL" + contadorTL++);
+                                                                    String variables = "";
+                                                                    LinkedList<Token> auxLL = (LinkedList) llT.clone();
+                                                                    for (Token token : auxLL) {
+                                                                        if (!token.equals(b)) {
+                                                                            Token a = llT.pop();
+                                                                            if (!token.lexema.trim().equals("[") && !token.lexema.trim().equals("]")) {
+                                                                                variables += a.lexema.trim();
+                                                                            }
+                                                                            if (token.lexema.trim().equals("]")) {
+                                                                                break;
                                                                             }
                                                                         }
                                                                     }
+                                                                    String[] variables1 = variables.split(":");
+                                                                    cuadL.setArg1(variables1[0]);
+                                                                    if (variables1.length > 1) {
+                                                                        cuadL.setArg2(variables1[1]);
+                                                                    }
+                                                                    llCuadruplos.add(cuadL);
                                                                 }
                                                                 b.value = bAmbito.getClase().trim();
                                                             }
@@ -2325,7 +2364,13 @@ public class Sintaxis {
                                             }
                                             while (operadores.size() > 0) {
                                                 Token cuads1 = operandos.peek();
+                                                if (cuads1.lexema.trim().equals(arr)) {
+                                                    cuads1.lexema = "TL" + (contadorTL - 1);
+                                                }
                                                 Token cuads2 = operandos.get(operandos.size() - 2);
+                                                if (cuads2.lexema.trim().equals(arr)) {
+                                                    cuads2.lexema = "TL" + (contadorTL - 1);
+                                                }
                                                 Token cuadsOp = operadores.peek();
                                                 //<editor-fold desc="Cuadruplos condicionales 5">
                                                 cuad.setAccion(cuadsOp.lexema.trim());
