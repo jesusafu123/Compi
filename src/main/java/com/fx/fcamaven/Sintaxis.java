@@ -261,6 +261,7 @@ public class Sintaxis {
     String cuadPrintC = "";
     boolean cuadPrint = false;
     int contadorWhile = 1, contadorTB = 1;
+    LinkedList<ContadoresCuadruplos> cc = new LinkedList();
     //</editor-fold>
 
     public void rellenarPs(int pos) {
@@ -273,6 +274,7 @@ public class Sintaxis {
     }
 
     public Sintaxis(LinkedList<Token> lt, LinkedList<Error> le, String[][][] matrizSem1) {
+        cc.add(new ContadoresCuadruplos(0));
         this.matrizSem1 = matrizSem1;
         objetoSem1s = new LinkedList();
         contadorAmb = 0;
@@ -569,6 +571,7 @@ public class Sintaxis {
                                                     auxiliar2 = auxiliar2.replace(")", "").trim();
                                                     auxiliar = auxiliar2.split(",");
                                                     contadorAmb++;
+                                                    cc.add(new ContadoresCuadruplos(contadorAmb));
                                                     Ambito ambito = new Ambito();
                                                     ambito.setIdentificador(aux2.getFirst().lexema.trim());
                                                     ambito.setAmbitoCreado(contadorAmb);
@@ -717,6 +720,7 @@ public class Sintaxis {
                                                     if (lista) {
                                                         ambito.setAmbitoCreado(++contadorAmb);
                                                         ambito.setClase(LIS);
+                                                        cc.add(new ContadoresCuadruplos(contadorAmb));
                                                     } else {
                                                         objetoSem2s.add(os2);
                                                         this.os2 = os2;
@@ -777,6 +781,7 @@ public class Sintaxis {
                                                     ambito.setIdentificador(aux2.getFirst().lexema.trim());
                                                     ambito.setAmbito(pila.peek());
                                                     ambito.setAmbitoCreado(++contadorAmb);
+                                                    cc.add(new ContadoresCuadruplos(contadorAmb));
                                                     ambito.setTipo(STR);
                                                     ambito.setTamanioArreglo(auxiliar.length);
                                                     if (diccionario) {
@@ -871,6 +876,7 @@ public class Sintaxis {
                                                 }
                                                 a.setAmbito(pila.peek());
                                                 a.setAmbitoCreado(++contadorAmb);
+                                                cc.add(new ContadoresCuadruplos(contadorAmb));
                                                 a.setClase(FUN);
                                                 a.setTipo(NON);
                                                 String[] auxiliar = aux.split("\\(");
@@ -1643,7 +1649,21 @@ public class Sintaxis {
                                                                 objetoSem2s.add(o2);
                                                             }
                                                         } else {
-                                                            System.out.println("CONTIENE RESERVADAS PUTOOOOOOOOOO: " + string);
+                                                            //<editor-fold desc="Cuadruplos X=input()">
+                                                            if (string.matches("[^=]+=input\\(\\)")) {
+                                                                Cuadruplo c = new Cuadruplo();
+                                                                c.setAccion("call");
+                                                                int calls = cc.get(pila.peek()).getCall();
+                                                                calls++;
+                                                                cc.get(pila.peek()).setCall(calls);
+                                                                c.setArg1("input");
+                                                                int funciones = cc.get(pila.peek()).getFunciones();
+                                                                funciones++;
+                                                                cc.get(pila.peek()).setAmbito(funciones);
+                                                                c.setResultado("void");
+                                                                llCuadruplos.add(c);
+                                                            }
+                                                            //</editor-fold>
                                                             Token operador = a.get(1);
                                                             Token a2 = a.getFirst();
                                                             Ambito ambito = null;
@@ -2184,12 +2204,16 @@ public class Sintaxis {
                                             o.setAmbito(pila.peek());
                                             o.setLinea(llT.getFirst().numeroLinea);
                                             o.setTopeDePila(BOO);
+                                            //<editor-fold desc="Cuadruplos condicionales 1">
                                             Cuadruplo cuad = new Cuadruplo();
+                                            //</editor-fold>
                                             if (string.matches("(i|I)(f|F).+")) {
                                                 o.setRegla(1010 + "");
                                             } else if (string.matches("(w|W)(h|H)(i|I)(l|L)(e|E).+")) {
                                                 o.setRegla(1011 + "");
+                                                //<editor-fold desc="Cuadruplos condicionales 3">
                                                 cuad.setEtiqueta("Whi-E" + contadorWhile++);
+                                                //</editor-fold>
                                             } else if (string.matches("(e|E)(l|L)(i|I)(f|F).+")) {
                                                 o.setRegla(1012 + "");
                                             }
@@ -2261,6 +2285,7 @@ public class Sintaxis {
                                                 Token cuads1 = operandos.peek();
                                                 Token cuads2 = operandos.get(operandos.size() - 2);
                                                 Token cuadsOp = operadores.peek();
+                                                //<editor-fold desc="Cuadruplos condicionales 5">
                                                 cuad.setAccion(cuadsOp.lexema.trim());
                                                 if (cuads1.value != null) {
                                                     cuad.setArg2(cuads1.lexema.trim());
@@ -2272,6 +2297,7 @@ public class Sintaxis {
                                                 String valor = transformar(cuadsr);
                                                 cuad.setResultado(valor);
                                                 llCuadruplos.add(cuad);
+                                                //</editor-fold>
                                             }
                                             Token r = operandos.pop();
                                             if (r.value.equals(BOO)) {
@@ -3577,6 +3603,7 @@ public class Sintaxis {
                                         contadorFun++;
                                         break;
                                     }
+                                    //<editor-fold desc="Cuadruplos print">
                                     case 818: {
                                         cuadPrint = true;
                                         cuadPrintC = "";
@@ -3588,11 +3615,43 @@ public class Sintaxis {
                                             if (cuadPrintC.matches("print\\(\".+\"\\)")) {
                                                 Cuadruplo c = new Cuadruplo();
                                                 c.setAccion("call");
+                                                int a = cc.get(pila.peek()).getCall();
+                                                cc.get(pila.peek()).setCall(++a);
                                                 c.setArg1("print");
+                                                a = cc.get(pila.peek()).getFunciones();
+                                                cc.get(pila.peek()).setFunciones(++a);
                                                 llCuadruplos.add(c);
 
                                                 c = new Cuadruplo();
                                                 c.setArg1(CAD);
+                                                c.setResultado("none/void");
+                                                llCuadruplos.add(c);
+                                            } else if (cuadPrintC.matches("print\\([a-zA-Z]+\\[[a-zA-Z]+\\]\\)")) {
+                                                Cuadruplo c = new Cuadruplo();
+                                                c.setAccion("call");
+                                                int a = cc.get(pila.peek()).getCall();
+                                                cc.get(pila.peek()).setCall(++a);
+                                                c.setArg1("print");
+                                                a = cc.get(pila.peek()).getFunciones();
+                                                cc.get(pila.peek()).setFunciones(++a);
+                                                llCuadruplos.add(c);
+
+                                                String auxCuad = "";
+                                                boolean booCuad = false;
+                                                for (int i = 0; i < cuadPrintC.length(); i++) {
+                                                    if (cuadPrintC.charAt(i) == ')') {
+                                                        booCuad = false;
+                                                    }
+                                                    if (booCuad) {
+                                                        auxCuad += cuadPrintC.charAt(i);
+                                                    }
+                                                    if (cuadPrintC.charAt(i) == '(') {
+                                                        booCuad = true;
+                                                    }
+                                                }
+                                                
+                                                c = new Cuadruplo();
+                                                c.setArg1(auxCuad);
                                                 c.setResultado("none/void");
                                                 llCuadruplos.add(c);
                                             }
@@ -3600,6 +3659,8 @@ public class Sintaxis {
                                         cuadPrint = false;
                                         break;
                                     }
+                                    //</editor-fold>
+
                                 }
                                 ///ed
                             }

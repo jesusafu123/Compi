@@ -23,6 +23,7 @@ com\fx\fcamaven\ArrowFactory.class
 com\fx\fcamaven\Cuadruplo.class
 com\fx\fcamaven\ObjetoSem2.class
 com\fx\fcamaven\Errores.class
+com\fx\fcamaven\ContadoresCuadruplos.class
 com\fx\fcamaven\Arrobas$arrobas.class
 com\fx\fcamaven\ObjetoSem1.class
 com\fx\fcamaven\ErroresC$ErroresSemantica3.class
