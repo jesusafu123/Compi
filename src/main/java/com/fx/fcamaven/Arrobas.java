@@ -34,5 +34,9 @@ public class Arrobas {
         public static int SEM2_RET = 817;
         public static int CUAD_PRINT_1 = 818;
         public static int CUAD_PRINT_2 = 819;
+        public static int CUAD_WEND_1 = 820;
+        public static int CUAD_WEND_2 = 821;
+        public static int CUAD_FEND_1 = 822;
+        public static int CUAD_FEND_2 = 823;
     }
 }

@@ -9,7 +9,7 @@ public class Token {
         this.numeroToken = numeroToken;
         this.lexema = lexema;
     }
-
+    
     public int getNumeroLinea() {
         return numeroLinea;
     }
