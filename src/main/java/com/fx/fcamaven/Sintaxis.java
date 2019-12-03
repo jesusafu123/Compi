@@ -2307,6 +2307,17 @@ public class Sintaxis {
                                                 //</editor-fold>
                                             } else if (string.matches("(e|E)(l|L)(i|I)(f|F).+")) {
                                                 o.setRegla(1012 + "");
+                                                Cuadruplo c = new Cuadruplo();
+                                                c.setAccion("JMP");
+                                                c.setResultado("If-E" + ++contadorIf);
+                                                llCuadruplos.add(c);
+
+                                                cuad.setEtiqueta(sc.pop().getArg1());
+
+                                                Cuadruplo se = new Cuadruplo();
+                                                se.setAccion("elif");
+                                                se.setArg1("IF-E" + contadorIf);
+                                                sc.push(se);
                                             }
                                             String aux2 = string.replace(llT.getFirst().lexema.trim(), "").trim();
                                             llT.removeFirst();
@@ -2327,7 +2338,16 @@ public class Sintaxis {
                                                             }
                                                             Token c = operadores.peek();
                                                             if (prioridad(b) <= prioridad(c)) { //***********************************************************************************************************
-                                                                hacerOperacion(2);
+                                                                Token op = operadores.peek();
+                                                                Token cuadb = operandos.peek();
+                                                                Token cuadA = operandos.get(operandos.size() - 2);
+                                                                cuad.setAccion(op.lexema.trim());
+                                                                cuad.setArg1(cuadA.lexema.trim());
+                                                                cuad.setArg2(cuadb.lexema.trim());
+                                                                Token res = hacerOperacion(2);
+                                                                cuad.setResultado(transformar(res));
+                                                                llCuadruplos.add(cuad);
+                                                                cuad = new Cuadruplo();
                                                             } else {
                                                                 break;
                                                             }
@@ -2393,10 +2413,14 @@ public class Sintaxis {
                                                 Token cuads1 = operandos.peek();
                                                 if (cuads1.lexema.trim().equals(arr)) {
                                                     cuads1.lexema = "TL" + (contadorTL - 1);
+                                                } else if (cuads1.lexema.trim().equals("@@@")) {
+                                                    cuads1.lexema = "TB" + (contadorTB - 2);
                                                 }
                                                 Token cuads2 = operandos.get(operandos.size() - 2);
                                                 if (cuads2.lexema.trim().equals(arr)) {
                                                     cuads2.lexema = "TL" + (contadorTL - 1);
+                                                } else if (cuads2.lexema.trim().equals("@@@")) {
+                                                    cuads2.lexema = "TB" + (contadorTB - 1);
                                                 }
                                                 Token cuadsOp = operadores.peek();
                                                 //<editor-fold desc="Cuadruplos condicionales 5">
@@ -2412,16 +2436,17 @@ public class Sintaxis {
                                                 cuad.setResultado(valor);
                                                 llCuadruplos.add(cuad);
                                                 cuad = new Cuadruplo();
-                                                cuad.setAccion("JF");
-                                                cuad.setArg1("TB" + (contadorTB - 1));
-                                                if (sc.peek().getAccion().equals("if")) {
-                                                    cuad.setResultado(sc.peek().getArg1());
-                                                } else if (sc.peek().getAccion().equals("whi")) {
-                                                    cuad.setResultado(sc.peek().getArg2());
-                                                }
-                                                llCuadruplos.add(cuad);
+
                                                 //</editor-fold>
                                             }
+                                            cuad.setAccion("JF");
+                                            cuad.setArg1("TB" + (contadorTB - 1));
+                                            if (sc.peek().getAccion().equals("if") || sc.peek().getAccion().equals("elif")) {
+                                                cuad.setResultado(sc.peek().getArg1());
+                                            } else if (sc.peek().getAccion().equals("whi")) {
+                                                cuad.setResultado(sc.peek().getArg2());
+                                            }
+                                            llCuadruplos.add(cuad);
                                             Token r = operandos.pop();
                                             if (r.value.equals(BOO)) {
                                                 o.setEstado(SEM2_A);
@@ -3828,21 +3853,21 @@ public class Sintaxis {
                                                 aux2 = aux2.replace(")", "").trim();
                                                 aux2 += ")";
                                                 boolean factor = false;
-                                                
+
                                                 if (aux2.matches("Factor\\(Y\\)")) {
                                                     Cuadruplo c = new Cuadruplo();
                                                     c.setAccion("call");
                                                     c.setArg1("Factor");
                                                     llCuadruplos.add(c);
-                                                    
+
                                                     c = new Cuadruplo();
                                                     c.setArg1("Y");
                                                     c.setResultado("TdefFactor");
                                                     llCuadruplos.add(c);
-                                                    
+
                                                     factor = true;
                                                 }
-                                                
+
                                                 Cuadruplo c = new Cuadruplo();
                                                 c.setAccion("call");
                                                 c.setArg1("print");
