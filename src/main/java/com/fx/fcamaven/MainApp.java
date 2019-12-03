@@ -260,6 +260,7 @@ public class MainApp extends Application {
             do {
                 if (Excelsior.crearArchivo(contador)) {
                     Excelsior.excel(errores, excelAmbito, excelSem1, excelSem2, excelCuad);
+                    excelCuad = null;
                     break;
                 } else {
                     contador++;
