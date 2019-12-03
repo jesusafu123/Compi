@@ -9,6 +9,8 @@ import static com.fx.fcamaven.Arrobas.arrobas.AMBITO_ZONA_DECLARACION;
 import static com.fx.fcamaven.Arrobas.arrobas.AMBITO_ZONA_EJECUCION;
 import static com.fx.fcamaven.Arrobas.arrobas.CUAD_FEND_1;
 import static com.fx.fcamaven.Arrobas.arrobas.CUAD_FEND_2;
+import static com.fx.fcamaven.Arrobas.arrobas.CUAD_IEND_1;
+import static com.fx.fcamaven.Arrobas.arrobas.CUAD_IEND_2;
 import static com.fx.fcamaven.Arrobas.arrobas.CUAD_PRINT_1;
 import static com.fx.fcamaven.Arrobas.arrobas.CUAD_PRINT_2;
 import static com.fx.fcamaven.Arrobas.arrobas.CUAD_WEND_1;
@@ -198,7 +200,7 @@ public class Sintaxis {
         /*109*/ {-37, 212, -36, -81}, // FUNCIONES::= ) OR ( sum
         /*110*/ {CUAD_PRINT_2, -37, 247, 212, -36, -61, CUAD_PRINT_1}, // ESTATUTOS::= @ ) X OR ( print @
         /*111*/ {-37, 248, -36, -91}, // ESTATUTOS::= ) Y ( println
-        /*112*/ {-93, 250, 249, 246, -51, SEM2_1010_2, 212, -59, SEM2_1010_1}, // ESTATUTOS::= end Z2 Z ESTATUTOS : @ OR if @
+        /*112*/ {CUAD_IEND_2, -93, CUAD_IEND_1, 250, 249, 246, -51, SEM2_1010_2, 212, -59, SEM2_1010_1}, // ESTATUTOS::= @ end @ Z2 Z ESTATUTOS : @ OR if @
         /*113*/ {CUAD_FEND_2, -93, CUAD_FEND_1, 249, 246, -51, SEM2_FOR_2, 212, -95, 212, -58, SEM2_FOR_1}, // ESTATUTOS::= @ end @ Z ESTATUTOS : @ OR for @
         /*114*/ {CUAD_WEND_2, -92, CUAD_WEND_1, 249, 246, -51, SEM2_1010_2, 212, -63, SEM2_1010_1}, // ESTATUTOS::= @ wend @ Z ESTATUTOS : @ OR while @ 
         /*115*/ {-54}, // ESTATUTOS::= break
@@ -262,10 +264,10 @@ public class Sintaxis {
     //<editor-fold desc="Declaraciones cuádruplos">
     LinkedList<Cuadruplo> llCuadruplos = new LinkedList();
     LinkedList<Token> cuadPrintT = new LinkedList();
-    Token cuadWendT, cuadFendT;
+    Token cuadWendT, cuadFendT, cuadIendT;
     String cuadPrintC = "";
-    boolean cuadPrint = false, cuadWend = false, cuadFend;
-    int contadorWhile = 1, contadorTB = 1, contadorTfor = 1, contadorFor = 1, contadorTforb = 1;
+    boolean cuadPrint = false, cuadWend = false, cuadFend = false, cuadIend = false;
+    int contadorWhile = 1, contadorTB = 1, contadorTfor = 1, contadorFor = 1, contadorTforb = 1, contadorIf = 1;
     LinkedList<ContadoresCuadruplos> cc = new LinkedList();
     Stack<Cuadruplo> sc = new Stack();
     //</editor-fold>
@@ -385,6 +387,9 @@ public class Sintaxis {
                             }
                             if (cuadFend) {
                                 cuadFendT = lt.getFirst();
+                            }
+                            if (cuadIend) {
+                                cuadIendT = lt.getFirst();
                             }
                             ///ed
                         } else {
@@ -2229,6 +2234,10 @@ public class Sintaxis {
                                             //</editor-fold>
                                             if (string.matches("(i|I)(f|F).+")) {
                                                 o.setRegla(1010 + "");
+                                                Cuadruplo se = new Cuadruplo();
+                                                se.setAccion("if");
+                                                se.setArg1("IF-E" + contadorIf);
+                                                sc.push(se);
                                             } else if (string.matches("(w|W)(h|H)(i|I)(l|L)(e|E).+")) {
                                                 o.setRegla(1011 + "");
                                                 //<editor-fold desc="Cuadruplos condicionales 3">
@@ -2325,7 +2334,11 @@ public class Sintaxis {
                                                 cuad = new Cuadruplo();
                                                 cuad.setAccion("JF");
                                                 cuad.setArg1("TB" + (contadorTB - 1));
-                                                cuad.setResultado(sc.peek().getArg2());
+                                                if (sc.peek().getAccion().equals("if")) {
+                                                    cuad.setResultado(sc.peek().getArg1());
+                                                } else if (sc.peek().getAccion().equals("whi")) {
+                                                    cuad.setResultado(sc.peek().getArg2());
+                                                }
                                                 llCuadruplos.add(cuad);
                                                 //</editor-fold>
                                             }
@@ -3786,6 +3799,25 @@ public class Sintaxis {
                                             }
                                         }
                                         cuadFendT = null;
+                                        break;
+                                    }
+                                    //</editor-fold>
+                                    //<editor-fold desc="IEND">
+                                    case 824: {
+                                        cuadIend = true;
+                                        break;
+                                    }
+                                    case 825: {
+                                        if (cuadIendT != null) {
+                                            if (cuadIendT.lexema.trim().equals("end")) {
+                                                Cuadruplo c = sc.pop();
+                                                
+                                                Cuadruplo c2 = new Cuadruplo();
+                                                c2.setEtiqueta(c.getArg1());
+                                                llCuadruplos.add(c2);
+                                                contadorIf++;
+                                            }
+                                        }
                                         break;
                                     }
                                     //</editor-fold>
