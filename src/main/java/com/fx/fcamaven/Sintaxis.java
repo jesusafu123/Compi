@@ -588,7 +588,6 @@ public class Sintaxis {
                                                     auxiliar2 = auxiliar2.replace(")", "").trim();
                                                     auxiliar = auxiliar2.split(",");
                                                     contadorAmb++;
-                                                    cc.add(new ContadoresCuadruplos(contadorAmb));
                                                     Ambito ambito = new Ambito();
                                                     ambito.setIdentificador(aux2.getFirst().lexema.trim());
                                                     ambito.setAmbitoCreado(contadorAmb);
@@ -737,7 +736,6 @@ public class Sintaxis {
                                                     if (lista) {
                                                         ambito.setAmbitoCreado(++contadorAmb);
                                                         ambito.setClase(LIS);
-                                                        cc.add(new ContadoresCuadruplos(contadorAmb));
                                                     } else {
                                                         objetoSem2s.add(os2);
                                                         this.os2 = os2;
@@ -798,7 +796,6 @@ public class Sintaxis {
                                                     ambito.setIdentificador(aux2.getFirst().lexema.trim());
                                                     ambito.setAmbito(pila.peek());
                                                     ambito.setAmbitoCreado(++contadorAmb);
-                                                    cc.add(new ContadoresCuadruplos(contadorAmb));
                                                     ambito.setTipo(STR);
                                                     ambito.setTamanioArreglo(auxiliar.length);
                                                     if (diccionario) {
@@ -893,7 +890,6 @@ public class Sintaxis {
                                                 }
                                                 a.setAmbito(pila.peek());
                                                 a.setAmbitoCreado(++contadorAmb);
-                                                cc.add(new ContadoresCuadruplos(contadorAmb));
                                                 a.setClase(FUN);
                                                 a.setTipo(NON);
                                                 String[] auxiliar = aux.split("\\(");
@@ -905,6 +901,7 @@ public class Sintaxis {
                                                     a.setCantidadParametros(auxiliar.length);
                                                 }
                                                 pila.add(contadorAmb);
+                                                cc.add(new ContadoresCuadruplos(contadorAmb));
                                                 AmbitoDB.agregarRegistro(a);
                                                 for (int i = 0; i < auxiliar.length; i++) {
                                                     String string = auxiliar[i];
@@ -921,6 +918,9 @@ public class Sintaxis {
                                                 }
                                                 Cuadruplo c = new Cuadruplo();
                                                 c.setEtiqueta("def");
+                                                int cont = cc.get(pila.peek()).getDef();
+                                                cont++;
+                                                cc.get(pila.peek()).setDef(cont);
                                                 c.setAccion(a.getIdentificador());
                                                 llCuadruplos.add(c);
                                                 sc.push(c);
@@ -938,6 +938,9 @@ public class Sintaxis {
                                             Cuadruplo c = sc.pop();
                                             Cuadruplo cuad = new Cuadruplo();
                                             cuad.setEtiqueta("EndDef");
+                                            int cont = cc.get(pila.peek()).getEnddef();
+                                            cont++;
+                                            cc.get(pila.peek()).setEnddef(cont);
                                             cuad.setAccion(c.getAccion());
                                             llCuadruplos.add(cuad);
                                         } else {
@@ -1025,6 +1028,9 @@ public class Sintaxis {
                                                                 o.setRegla(1030 + "");
                                                                 Cuadruplo cuadL = new Cuadruplo();
                                                                 cuadL.setAccion("Lista");
+                                                                int cont = cc.get(pila.peek()).getListas();
+                                                                cont++;
+                                                                cc.get(pila.peek()).setListas(cont);
                                                                 cuadL.setArg1(arr);
                                                                 llCuadruplos.add(cuadL);
 
@@ -1076,6 +1082,9 @@ public class Sintaxis {
                                                                     }
                                                                 }
                                                                 cuadL.setResultado("TL" + contadorTL++);
+                                                                int cont2 = cc.get(pila.peek()).getTl();
+                                                                cont2++;
+                                                                cc.get(pila.peek()).setTl(cont2);
                                                                 llCuadruplos.add(cuadL);
                                                                 objetoSem2s.add(o);
                                                                 //ed
@@ -1605,6 +1614,9 @@ public class Sintaxis {
                                                                         cuad.setResultado("TL" + (contadorTL - 1));
                                                                     }
                                                                     llCuadruplos.add(cuad);
+                                                                    int cont = cc.get(pila.peek()).getAsignaciones();
+                                                                    cont++;
+                                                                    cc.get(pila.peek()).setAsignaciones(cont);
                                                                 } else {
                                                                     ObjetoSem2 os2 = new ObjetoSem2(contadorSem2++);
                                                                     os2.setAmbito(pila.peek());
@@ -1721,7 +1733,7 @@ public class Sintaxis {
                                                                 c.setArg1("input");
                                                                 int funciones = cc.get(pila.peek()).getFunciones();
                                                                 funciones++;
-                                                                cc.get(pila.peek()).setAmbito(funciones);
+                                                                cc.get(pila.peek()).setFunciones(funciones);
                                                                 c.setResultado("void");
                                                                 llCuadruplos.add(c);
                                                             }
@@ -1750,6 +1762,9 @@ public class Sintaxis {
                                                                     //<editor-fold desc="cuadruplos D=input 2">
                                                                     Cuadruplo cuad = new Cuadruplo();
                                                                     cuad.setAccion("=");
+                                                                    int cont = cc.get(pila.peek()).getAsignaciones();
+                                                                    cont++;
+                                                                    cc.get(pila.peek()).setAsignaciones(cont);
                                                                     cuad.setArg1(a2.lexema.trim());
                                                                     if (cuad.getArg1().equals(arr)) {
                                                                         cuad.setArg1("TL" + (contadorTL - 1));
@@ -2258,6 +2273,17 @@ public class Sintaxis {
                                                             cuad.setAccion("call");
                                                             cuad.setArg1("Matrices");
                                                             cuad.setResultado("TN2");
+                                                            int cont = cc.get(pila.peek()).getMetodos();
+                                                            cont++;
+                                                            cc.get(pila.peek()).setMetodos(cont);
+                                                            
+                                                            cont = cc.get(pila.peek()).getTn();
+                                                            cont++;
+                                                            cc.get(pila.peek()).setTn(cont);
+                                                            
+                                                            cont = cc.get(pila.peek()).getCall();
+                                                            cont++;
+                                                            cc.get(pila.peek()).setCall(cont);
                                                         }
                                                         ///ed
                                                     }
@@ -2305,7 +2331,15 @@ public class Sintaxis {
                                                 se.setAccion("whi");
                                                 se.setArg1("Whi-E" + contadorWhile);
                                                 cuad.setEtiqueta("Whi-E" + contadorWhile++);
+                                                int cont = cc.get(pila.peek()).getWhi_e();
+                                                cont++;
+                                                cc.get(pila.peek()).setWhi_e(cont);
+                                                
                                                 se.setArg2("Whi-E" + contadorWhile++);
+                                                cont = cc.get(pila.peek()).getWhi_e();
+                                                cont++;
+                                                cc.get(pila.peek()).setWhi_e(cont);
+                                                
                                                 sc.push(se);
                                                 //</editor-fold>
                                             } else if (string.matches("(e|E)(l|L)(i|I)(f|F).+")) {
@@ -2313,6 +2347,9 @@ public class Sintaxis {
                                                 Cuadruplo c = new Cuadruplo();
                                                 c.setAccion("JMP");
                                                 c.setResultado("If-E" + ++contadorIf);
+                                                int cont = cc.get(pila.peek()).getIf_e();
+                                                cont++;
+                                                cc.get(pila.peek()).setIf_e(cont);
                                                 llCuadruplos.add(c);
 
                                                 cuad.setEtiqueta(sc.pop().getArg1());
@@ -2342,6 +2379,11 @@ public class Sintaxis {
                                                             Token c = operadores.peek();
                                                             if (prioridad(b) <= prioridad(c)) { //***********************************************************************************************************
                                                                 Token op = operadores.peek();
+                                                                
+                                                                int cont = cc.get(pila.peek()).getRelacionales();
+                                                                cont++;
+                                                                cc.get(pila.peek()).setRelacionales(cont);
+                                                                
                                                                 Token cuadb = operandos.peek();
                                                                 Token cuadA = operandos.get(operandos.size() - 2);
                                                                 cuad.setAccion(op.lexema.trim());
@@ -2349,6 +2391,11 @@ public class Sintaxis {
                                                                 cuad.setArg2(cuadb.lexema.trim());
                                                                 Token res = hacerOperacion(2);
                                                                 cuad.setResultado(transformar(res));
+                                                                
+                                                                cont = cc.get(pila.peek()).getTb();
+                                                                cont++;
+                                                                cc.get(pila.peek()).setTb(cont);
+                                                                
                                                                 llCuadruplos.add(cuad);
                                                                 cuad = new Cuadruplo();
                                                             } else {
@@ -2373,12 +2420,22 @@ public class Sintaxis {
                                                                 if (bAmbito.getClase().trim().equals(ARR)) {
                                                                     Cuadruplo cuadL = new Cuadruplo();
                                                                     cuadL.setAccion("Lista");
+                                                                    
+                                                                    int cont = cc.get(pila.peek()).getListas();
+                                                                    cont++;
+                                                                    cc.get(pila.peek()).setListas(cont);
+                                                                    
                                                                     arr = bAmbito.getIdentificador();
                                                                     cuadL.setArg1(bAmbito.getIdentificador());
                                                                     llCuadruplos.add(cuadL);
 
                                                                     cuadL = new Cuadruplo();
                                                                     cuadL.setResultado("TL" + contadorTL++);
+                                                                    
+                                                                    cont = cc.get(pila.peek()).getTl();
+                                                                    cont++;
+                                                                    cc.get(pila.peek()).setTl(cont);
+                                                                    
                                                                     String variables = "";
                                                                     LinkedList<Token> auxLL = (LinkedList) llT.clone();
                                                                     for (Token token : auxLL) {
@@ -2426,6 +2483,11 @@ public class Sintaxis {
                                                     cuads2.lexema = "TB" + (contadorTB - 1);
                                                 }
                                                 Token cuadsOp = operadores.peek();
+                                                
+                                                int cont = cc.get(pila.peek()).getRelacionales();
+                                                cont++;
+                                                cc.get(pila.peek()).setRelacionales(cont);
+                                                
                                                 //<editor-fold desc="Cuadruplos condicionales 5">
                                                 cuad.setAccion(cuadsOp.lexema.trim());
                                                 if (cuads1.value != null) {
@@ -2435,6 +2497,11 @@ public class Sintaxis {
                                                     cuad.setArg1(cuads2.lexema.trim());
                                                 }
                                                 Token cuadsr = hacerOperacion(2);
+                                                
+                                                cont = cc.get(pila.peek()).getTb();
+                                                cont++;
+                                                cc.get(pila.peek()).setTb(cont);
+                                                
                                                 String valor = transformar(cuadsr);
                                                 cuad.setResultado(valor);
                                                 llCuadruplos.add(cuad);
@@ -2443,6 +2510,11 @@ public class Sintaxis {
                                                 //</editor-fold>
                                             }
                                             cuad.setAccion("JF");
+                                            
+                                            int cont = cc.get(pila.peek()).getJf();
+                                            cont++;
+                                            cc.get(pila.peek()).setJf(cont);
+                                            
                                             cuad.setArg1("TB" + (contadorTB - 1));
                                             if (sc.peek().getAccion().equals("if") || sc.peek().getAccion().equals("elif")) {
                                                 cuad.setResultado(sc.peek().getArg1());
@@ -3657,17 +3729,42 @@ public class Sintaxis {
 
                                             Cuadruplo c = new Cuadruplo();
                                             c.setAccion("=");
+                                            
+                                            int cont = cc.get(pila.peek()).getAsignaciones();
+                                            cont++;
+                                            cc.get(pila.peek()).setAsignaciones(cont);
+                                            
                                             c.setArg1("Tfor" + contadorTfor++);
+                                            
+                                            cont = cc.get(pila.peek()).getTfor();
+                                            cont++;
+                                            cc.get(pila.peek()).setTfor(cont);
+                                            
                                             c.setResultado(primer.lexema.trim());
                                             llCuadruplos.add(c);
 
                                             c = new Cuadruplo();
                                             c.setEtiqueta("For-E" + contadorFor++);
+                                            
+                                            cont = cc.get(pila.peek()).getFor_e();
+                                            cont++;
+                                            cc.get(pila.peek()).setFor_e(cont);
+                                            
                                             c.setAccion("<");
+                                            
+                                            cont = cc.get(pila.peek()).getRelacionales();
+                                            cont++;
+                                            cc.get(pila.peek()).setRelacionales(cont);
+                                            
                                             c.setArg1("Tfor" + (contadorTfor - 1));
                                             String resultadoB = c.getArg1();
                                             c.setArg2(segundo.lexema.trim());
                                             c.setResultado("Tforb" + contadorTforb++);
+                                            
+                                            cont = cc.get(pila.peek()).getTforb();
+                                            cont++;
+                                            cc.get(pila.peek()).setTforb(cont);
+                                            
                                             String resultadoA = c.getResultado();
                                             llCuadruplos.add(c);
 
@@ -3680,12 +3777,27 @@ public class Sintaxis {
 
                                             c = new Cuadruplo();
                                             c.setAccion("JF");
+                                            
+                                            cont = cc.get(pila.peek()).getJf();
+                                            cont++;
+                                            cc.get(pila.peek()).setJf(cont);
+                                            
                                             c.setArg1(resultadoA);
                                             c.setResultado("For-E" + contadorFor++);
+                                            
+                                            cont = cc.get(pila.peek()).getFor_e();
+                                            cont++;
+                                            cc.get(pila.peek()).setFor_e(cont);
+                                            
                                             llCuadruplos.add(c);
 
                                             c = new Cuadruplo();
                                             c.setAccion("=");
+                                            
+                                            cont = cc.get(pila.peek()).getAsignaciones();
+                                            cont++;
+                                            cc.get(pila.peek()).setAsignaciones(cont);
+                                            
                                             c.setArg1(variable.lexema.trim());
                                             c.setResultado(resultadoB);
                                             llCuadruplos.add(c);
@@ -3844,12 +3956,22 @@ public class Sintaxis {
 
                                                 Cuadruplo c = new Cuadruplo();
                                                 c.setAccion("Lista");
+                                                
+                                                int cont = cc.get(pila.peek()).getListas();
+                                                cont++;
+                                                cc.get(pila.peek()).setListas(cont);
+                                                
                                                 c.setArg1(a1.lexema.trim());
                                                 llCuadruplos.add(c);
 
                                                 c = new Cuadruplo();
                                                 c.setArg1(auxi2);
                                                 c.setResultado("TL" + contadorTL++);
+                                                
+                                                cont = cc.get(pila.peek()).getTl();
+                                                cont++;
+                                                cc.get(pila.peek()).setTl(cont);
+                                                
                                                 llCuadruplos.add(c);
 
                                                 c = new Cuadruplo();
@@ -3878,12 +4000,27 @@ public class Sintaxis {
                                                 if (aux2.matches("Factor\\(Y\\)")) {
                                                     Cuadruplo c = new Cuadruplo();
                                                     c.setAccion("call");
+                                                    
+                                                    int cont = cc.get(pila.peek()).getCall();
+                                                    cont++;
+                                                    cc.get(pila.peek()).setCall(cont);
+                                                    
                                                     c.setArg1("Factor");
+                                                    
+                                                    cont = cc.get(pila.peek()).getMetodos();
+                                                    cont++;
+                                                    cc.get(pila.peek()).setMetodos(cont);
+                                                    
                                                     llCuadruplos.add(c);
 
                                                     c = new Cuadruplo();
                                                     c.setArg1("Y");
                                                     c.setResultado("TdefFactor");
+                                                    
+                                                    cont = cc.get(pila.peek()).getTdefxxx();
+                                                    cont++;
+                                                    cc.get(pila.peek()).setTdefxxx(cont);
+                                                    
                                                     llCuadruplos.add(c);
 
                                                     factor = true;
@@ -3891,7 +4028,17 @@ public class Sintaxis {
 
                                                 Cuadruplo c = new Cuadruplo();
                                                 c.setAccion("call");
+                                                
+                                                int cont = cc.get(pila.peek()).getCall();
+                                                cont++;
+                                                cc.get(pila.peek()).setCall(cont);
+                                                
                                                 c.setArg1("print");
+                                                
+                                                cont = cc.get(pila.peek()).getFunciones();
+                                                cont++;
+                                                cc.get(pila.peek()).setFunciones(cont);
+                                                
                                                 llCuadruplos.add(c);
 
                                                 String a = "";
@@ -3906,22 +4053,57 @@ public class Sintaxis {
                                                 c = new Cuadruplo();
                                                 c.setArg1(a);
                                                 c.setArg2("TdefFactor");
+                                                
+                                                cont = cc.get(pila.peek()).getTdefxxx();
+                                                cont++;
+                                                cc.get(pila.peek()).setTdefxxx(cont);
+                                                
                                                 c.setResultado("none/void");
                                                 llCuadruplos.add(c);
                                             } else if (cuadPrintC.matches("print\\(Sorteo\\(\\)\\)")) {
                                                 Cuadruplo c = new Cuadruplo();
                                                 c.setAccion("call");
+                                                
+                                                int cont = cc.get(pila.peek()).getCall();
+                                                cont++;
+                                                cc.get(pila.peek()).setCall(cont);
+                                                
                                                 c.setArg1("Sorteo");
+                                                
+                                                cont = cc.get(pila.peek()).getMetodos();
+                                                cont++;
+                                                cc.get(pila.peek()).setMetodos(cont);
+                                                
                                                 c.setResultado("TN1");
+                                                
+                                                cont = cc.get(pila.peek()).getTn();
+                                                cont++;
+                                                cc.get(pila.peek()).setTn(cont);
+                                                
                                                 llCuadruplos.add(c);
 
                                                 c = new Cuadruplo();
                                                 c.setAccion("call");
+                                                
+                                                cont = cc.get(pila.peek()).getCall();
+                                                cont++;
+                                                cc.get(pila.peek()).setCall(cont);
+                                                
                                                 c.setArg1("print");
+                                                
+                                                cont = cc.get(pila.peek()).getFunciones();
+                                                cont++;
+                                                cc.get(pila.peek()).setFunciones(cont);
+                                                
                                                 llCuadruplos.add(c);
 
                                                 c = new Cuadruplo();
                                                 c.setArg1("TN1");
+                                                
+                                                cont = cc.get(pila.peek()).getTn();
+                                                cont++;
+                                                cc.get(pila.peek()).setTn(cont);
+                                                
                                                 c.setResultado("none/void");
                                                 llCuadruplos.add(c);
                                             }

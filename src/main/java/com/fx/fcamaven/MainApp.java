@@ -82,6 +82,7 @@ public class MainApp extends Application {
     LinkedList<ObjetoSem1> excelSem1;
     LinkedList<ObjetoSem2> excelSem2;
     LinkedList<Cuadruplo> excelCuad;
+    LinkedList<ContadoresCuadruplos> excelCCuad;
     Lexico1 l;
     private static final String KEYWORD_PATTERN = ".*\\n";
     private static final String DOS_PATTERN = ".*";
@@ -259,8 +260,9 @@ public class MainApp extends Application {
             int contador = 0;
             do {
                 if (Excelsior.crearArchivo(contador)) {
-                    Excelsior.excel(errores, excelAmbito, excelSem1, excelSem2, excelCuad);
+                    Excelsior.excel(errores, excelAmbito, excelSem1, excelSem2, excelCuad, excelCCuad);
                     excelCuad = null;
+                    excelCCuad = null;
                     break;
                 } else {
                     contador++;
@@ -585,6 +587,11 @@ public class MainApp extends Application {
         }
         if (l.getLE().isEmpty()) {
             this.excelCuad = synth.llCuadruplos;
+            this.excelCCuad = synth.cc;
+            System.out.println("cc.size(): " + synth.cc.size());
+            for (ContadoresCuadruplos contadoresCuadruplos : synth.cc) {
+                System.out.println("CCCCC: " + contadoresCuadruplos.getAmbito());
+            }
             System.out.println("WUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU");
         }
         this.excelAmbito = synth.AmbitoExcel;

@@ -82,7 +82,7 @@ public class Excelsior {
         }
     }
 
-    public static void excel(ObservableList<Errores> e, LinkedList<ObjetoExcel> a, LinkedList<ObjetoSem1> sem1, LinkedList<ObjetoSem2> sem2, LinkedList<Cuadruplo> cuad) {
+    public static void excel(ObservableList<Errores> e, LinkedList<ObjetoExcel> a, LinkedList<ObjetoSem1> sem1, LinkedList<ObjetoSem2> sem2, LinkedList<Cuadruplo> cuad, LinkedList<ContadoresCuadruplos> ccuad) {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Errores");
         Row row = sheet.createRow(0);
@@ -313,6 +313,140 @@ public class Excelsior {
                 cell.setCellValue(cuad.get(j).getArg2());
                 cell = row.createCell(4);
                 cell.setCellValue(cuad.get(j).getResultado());
+            }
+        }
+
+        sheet = workbook.createSheet("Contadores Cuádruplos");
+        row = sheet.createRow(0);
+        cell = row.createCell(0);
+        cell.setCellValue("Ambitos");
+        cell = row.createCell(1);
+        cell.setCellValue("Aritmeticos");
+        cell = row.createCell(2);
+        cell.setCellValue("logicos");
+        cell = row.createCell(3);
+        cell.setCellValue("relacionales");
+        cell = row.createCell(4);
+        cell.setCellValue("listas");
+        cell = row.createCell(5);
+        cell.setCellValue("asignaciones");
+        cell = row.createCell(6);
+        cell.setCellValue("call");
+        cell = row.createCell(7);
+        cell.setCellValue("metodos");
+        cell = row.createCell(8);
+        cell.setCellValue("Funciones");
+        cell = row.createCell(9);
+        cell.setCellValue("JF");
+        cell = row.createCell(10);
+        cell.setCellValue("If-E");
+        cell = row.createCell(11);
+        cell.setCellValue("Tfor");
+        cell = row.createCell(12);
+        cell.setCellValue("Tforb");
+        cell = row.createCell(13);
+        cell.setCellValue("For-E");
+        cell = row.createCell(14);
+        cell.setCellValue("Whi-E");
+        cell = row.createCell(15);
+        cell.setCellValue("def");
+        cell = row.createCell(16);
+        cell.setCellValue("enddef");
+        cell = row.createCell(17);
+        cell.setCellValue("TdefXXX");
+        cell = row.createCell(18);
+        cell.setCellValue("TD");
+        cell = row.createCell(19);
+        cell.setCellValue("TDB");
+        cell = row.createCell(20);
+        cell.setCellValue("TDO");
+        cell = row.createCell(21);
+        cell.setCellValue("TDH");
+        cell = row.createCell(22);
+        cell.setCellValue("TF");
+        cell = row.createCell(23);
+        cell.setCellValue("TS");
+        cell = row.createCell(24);
+        cell.setCellValue("TCH");
+        cell = row.createCell(25);
+        cell.setCellValue("TC");
+        cell = row.createCell(26);
+        cell.setCellValue("TB");
+        cell = row.createCell(27);
+        cell.setCellValue("TN");
+        cell = row.createCell(28);
+        cell.setCellValue("TL");
+        cell = row.createCell(29);
+        cell.setCellValue("TR");
+        cell = row.createCell(30);
+        cell.setCellValue("Total");
+
+        if (ccuad != null) {
+            for (int i = 0; i < ccuad.size(); i++) {
+                row = sheet.createRow(i + 1);
+                cell = row.createCell(0);
+                cell.setCellValue(ccuad.get(i).getAmbito());
+                cell = row.createCell(1);
+                cell.setCellValue(ccuad.get(i).getAritmeticos());
+                cell = row.createCell(2);
+                cell.setCellValue(ccuad.get(i).getLogicos());
+                cell = row.createCell(3);
+                cell.setCellValue(ccuad.get(i).getRelacionales());
+                cell = row.createCell(4);
+                cell.setCellValue(ccuad.get(i).getListas());
+                cell = row.createCell(5);
+                cell.setCellValue(ccuad.get(i).getAsignaciones());
+                cell = row.createCell(6);
+                cell.setCellValue(ccuad.get(i).getCall());
+                cell = row.createCell(7);
+                cell.setCellValue(ccuad.get(i).getMetodos());
+                cell = row.createCell(8);
+                cell.setCellValue(ccuad.get(i).getFunciones());
+                cell = row.createCell(9);
+                cell.setCellValue(ccuad.get(i).getJf());
+                cell = row.createCell(10);
+                cell.setCellValue(ccuad.get(i).getIf_e());
+                cell = row.createCell(11);
+                cell.setCellValue(ccuad.get(i).getTfor());
+                cell = row.createCell(12);
+                cell.setCellValue(ccuad.get(i).getTforb());
+                cell = row.createCell(13);
+                cell.setCellValue(ccuad.get(i).getFor_e());
+                cell = row.createCell(14);
+                cell.setCellValue(ccuad.get(i).getWhi_e());
+                cell = row.createCell(15);
+                cell.setCellValue(ccuad.get(i).getDef());
+                cell = row.createCell(16);
+                cell.setCellValue(ccuad.get(i).getEnddef());
+                cell = row.createCell(17);
+                cell.setCellValue(ccuad.get(i).getTdefxxx());
+                cell = row.createCell(18);
+                cell.setCellValue(ccuad.get(i).getTd());
+                cell = row.createCell(19);
+                cell.setCellValue(ccuad.get(i).getTdb());
+                cell = row.createCell(20);
+                cell.setCellValue(ccuad.get(i).getTdo());
+                cell = row.createCell(21);
+                cell.setCellValue(ccuad.get(i).getTdh());
+                cell = row.createCell(22);
+                cell.setCellValue(ccuad.get(i).getTf());
+                cell = row.createCell(23);
+                cell.setCellValue(ccuad.get(i).getTs());
+                cell = row.createCell(24);
+                cell.setCellValue(ccuad.get(i).getTch());
+                cell = row.createCell(25);
+                cell.setCellValue(ccuad.get(i).getTc());
+                cell = row.createCell(26);
+                cell.setCellValue(ccuad.get(i).getTb());
+                cell = row.createCell(27);
+                cell.setCellValue(ccuad.get(i).getTn());
+                cell = row.createCell(28);
+                cell.setCellValue(ccuad.get(i).getTl());
+                cell = row.createCell(29);
+                cell.setCellValue(ccuad.get(i).getTr());
+                cell = row.createCell(30);
+                ccuad.get(i).setTotal();
+                cell.setCellValue(ccuad.get(i).getTotal());
             }
         }
 

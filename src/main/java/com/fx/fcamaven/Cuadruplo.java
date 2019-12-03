@@ -55,5 +55,5 @@ public class Cuadruplo {
     public void setResultado(String resultado) {
         this.resultado = resultado;
     }
-
+    
 }

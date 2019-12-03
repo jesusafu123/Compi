@@ -11,7 +11,8 @@ package com.fx.fcamaven;
  */
 public class ContadoresCuadruplos {
 
-    private int ambito, aritmeticos, logicos, relacionales, listas, asignaciones, call, metodos, funciones, jf, if_e, tfor, tforb, for_e, whi_e, def, enddef, tdefxxx, td, tdb, tdo, tdh, tf, ts, tch, tc, tb, tn, tl, tr, total;
+    private final int ambito;
+    private int aritmeticos, logicos, relacionales, listas, asignaciones, call, metodos, funciones, jf, if_e, tfor, tforb, for_e, whi_e, def, enddef, tdefxxx, td, tdb, tdo, tdh, tf, ts, tch, tc, tb, tn, tl, tr, total;
 
     public ContadoresCuadruplos(int ambito) {
         this.ambito = ambito;
@@ -51,9 +52,9 @@ public class ContadoresCuadruplos {
         return ambito;
     }
 
-    public void setAmbito(int ambito) {
-        this.ambito = ambito;
-    }
+//    public void setAmbito(int ambito) {
+//        this.ambito = ambito;
+//    }
 
     public int getAritmeticos() {
         return aritmeticos;
@@ -293,5 +294,9 @@ public class ContadoresCuadruplos {
 
     public void setTotal(int total) {
         this.total = total;
+    }
+
+    public void setTotal() {
+        total = aritmeticos + logicos + relacionales + listas + asignaciones + call + metodos + funciones + jf + if_e + tfor + tforb + for_e + whi_e + def + enddef + tdefxxx + td + tdb + tdo + tdh + tf + ts + tch + tc + tb + tn + tl + tr;
     }
 }
