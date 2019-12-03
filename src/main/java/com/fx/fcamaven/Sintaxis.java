@@ -267,7 +267,7 @@ public class Sintaxis {
     Token cuadWendT, cuadFendT, cuadIendT;
     String cuadPrintC = "";
     boolean cuadPrint = false, cuadWend = false, cuadFend = false, cuadIend = false;
-    int contadorWhile = 1, contadorTB = 1, contadorTfor = 1, contadorFor = 1, contadorTforb = 1, contadorIf = 1;
+    int contadorWhile = 1, contadorTB = 1, contadorTfor = 1, contadorFor = 1, contadorTforb = 1, contadorIf = 1, contadorTD = 1;
     LinkedList<ContadoresCuadruplos> cc = new LinkedList();
     Stack<Cuadruplo> sc = new Stack();
     //</editor-fold>
@@ -1560,6 +1560,14 @@ public class Sintaxis {
                                                                     os2.setTopeDePila("Variable/Parámetro/Arreglo/Lista/Diccionario/Rango");
                                                                     os2.setValorReal(clase);
                                                                     objetoSem2s.add(os2);
+                                                                    
+                                                                    Cuadruplo cuad = new Cuadruplo();
+                                                                    cuad.setAccion(operador.lexema.trim());
+                                                                    cuad.setArg1(a2.lexema.trim());
+                                                                    cuad.setArg2(a1.lexema.trim());
+                                                                    String tr = transformar(a1);
+                                                                    cuad.setResultado(tr);
+                                                                    llCuadruplos.add(cuad);
                                                                 } else {
                                                                     ObjetoSem2 os2 = new ObjetoSem2(contadorSem2++);
                                                                     os2.setAmbito(pila.peek());
@@ -3811,7 +3819,6 @@ public class Sintaxis {
                                         if (cuadIendT != null) {
                                             if (cuadIendT.lexema.trim().equals("end")) {
                                                 Cuadruplo c = sc.pop();
-                                                
                                                 Cuadruplo c2 = new Cuadruplo();
                                                 c2.setEtiqueta(c.getArg1());
                                                 llCuadruplos.add(c2);
@@ -3953,6 +3960,9 @@ public class Sintaxis {
         switch (t.value) {
             case "Booleano": {
                 return "TB" + contadorTB++;
+            }
+            case "Decimal": {
+                return "TD" + contadorTD++;
             }
             default: {
                 return "";
