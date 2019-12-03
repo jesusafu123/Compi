@@ -89,7 +89,7 @@ public class Sintaxis {
     LinkedList<Error> le;
     Integer ultimo = 814;
     int[][] lp = {
-        /*1*/{AMBITO_CIERRE_AMBITO, -41, AMBITO_ZONA_DECLARACION, 203, 246, AMBITO_ZONA_EJECUCION, -40, 202}, // PROGRAM::= } @ A2 ESTATUTOS @ { A
+        /*1*/{AMBITO_CIERRE_AMBITO, -41, AMBITO_ZONA_DECLARACION, 203, 246, AMBITO_ZONA_EJECUCION, -40, 202}, // PROGRAM::= @ } @ A2 ESTATUTOS @ { A
         /*2*/ {202, SEM2_RET, -34, 201, AMBITO_DECLARACION_FUNCION_2, -37, 204, -36, -1, -68, AMBITO_DECLARACION_FUNCION_1}, // A::= A @ ; PROGRAM @ ) B ( identificador def @
         /*3*/ {202, -34, AMBITO_DECLARACION_VARIABLE_2, 206, -42, -1, AMBITO_DECLARACION_VARIABLE_1}, // A::= A ; @ CONSTANTE = identificador @ 
         /*4*/ {203, 246, -34}, // A2::= A2 ESTATUTOS ;
@@ -919,6 +919,11 @@ public class Sintaxis {
                                                         AmbitoDB.agregarRegistro(ambito);
                                                     }
                                                 }
+                                                Cuadruplo c = new Cuadruplo();
+                                                c.setEtiqueta("def");
+                                                c.setAccion(a.getIdentificador());
+                                                llCuadruplos.add(c);
+                                                sc.push(c);
                                             }
                                         }
                                         definicionesFuncionesC.removeLast();
@@ -930,10 +935,25 @@ public class Sintaxis {
                                     case 804: {
                                         if (pila.size() > 1) {
                                             pila.pop();
+                                            Cuadruplo c = sc.pop();
+                                            Cuadruplo cuad = new Cuadruplo();
+                                            cuad.setEtiqueta("EndDef");
+                                            cuad.setAccion(c.getAccion());
+                                            llCuadruplos.add(cuad);
+                                        } else {
+                                            Cuadruplo c = new Cuadruplo();
+                                            c.setEtiqueta("EndMain");
+                                            llCuadruplos.add(c);
                                         }
                                         break;
                                     }
                                     case 805: {
+                                        if (pila.size() == 1) {
+                                            Cuadruplo c = new Cuadruplo();
+                                            c.setEtiqueta("PPAL");
+                                            c.setAccion("Main:");
+                                            llCuadruplos.add(c);
+                                        }
                                         zona = false;
                                         break;
                                     }
@@ -2228,6 +2248,13 @@ public class Sintaxis {
                                                                 }
                                                                 ///ed
                                                             }
+                                                        } else if (string.matches("[^+]+\\+\\+")) {
+                                                            Token iden = a.getFirst();
+                                                            Cuadruplo cuad = new Cuadruplo();
+                                                            cuad.setAccion("++");
+                                                            cuad.setArg1(iden.lexema.trim());
+                                                            cuad.setResultado(cuad.getArg1());
+                                                            llCuadruplos.add(cuad);
                                                         }
                                                         ///ed
                                                     }
@@ -3792,8 +3819,49 @@ public class Sintaxis {
                                                 c.setArg1(auxCuad);
                                                 c.setResultado("none/void");
                                                 llCuadruplos.add(c);
-                                            } else if (cuadPrintC.matches("print\\([^,]+,[^,]\\)")) {
-                                                System.out.println("AUIIIIIIIIIIII");
+                                            } else if (cuadPrintC.matches("print\\([^,]+,[^,]+\\)")) {
+                                                cuadPrintT.removeFirst();
+                                                cuadPrintT.removeFirst();
+                                                Token t = cuadPrintT.getFirst();
+                                                String[] aux = cuadPrintC.split(",");
+                                                String aux2 = aux[1];
+                                                aux2 = aux2.replace(")", "").trim();
+                                                aux2 += ")";
+                                                boolean factor = false;
+                                                
+                                                if (aux2.matches("Factor\\(Y\\)")) {
+                                                    Cuadruplo c = new Cuadruplo();
+                                                    c.setAccion("call");
+                                                    c.setArg1("Factor");
+                                                    llCuadruplos.add(c);
+                                                    
+                                                    c = new Cuadruplo();
+                                                    c.setArg1("Y");
+                                                    c.setResultado("TdefFactor");
+                                                    llCuadruplos.add(c);
+                                                    
+                                                    factor = true;
+                                                }
+                                                
+                                                Cuadruplo c = new Cuadruplo();
+                                                c.setAccion("call");
+                                                c.setArg1("print");
+                                                llCuadruplos.add(c);
+
+                                                String a = "";
+                                                for (int i = 0; i < t.lexema.trim().length(); i++) {
+                                                    if ((int) t.lexema.trim().charAt(i) == 0) {
+                                                        a += " ";
+                                                    } else {
+                                                        a += t.lexema.trim().charAt(i);
+                                                    }
+                                                }
+
+                                                c = new Cuadruplo();
+                                                c.setArg1(a);
+                                                c.setArg2("TdefFactor");
+                                                c.setResultado("none/void");
+                                                llCuadruplos.add(c);
                                             }
                                         }
                                         cuadPrint = false;
