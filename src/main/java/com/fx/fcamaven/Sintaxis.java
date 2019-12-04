@@ -918,9 +918,11 @@ public class Sintaxis {
                                                 }
                                                 Cuadruplo c = new Cuadruplo();
                                                 c.setEtiqueta("def");
+                                                
                                                 int cont = cc.get(pila.peek()).getDef();
                                                 cont++;
                                                 cc.get(pila.peek()).setDef(cont);
+                                                
                                                 c.setAccion(a.getIdentificador());
                                                 llCuadruplos.add(c);
                                                 sc.push(c);
